@@ -1,0 +1,11 @@
+package com.example.androiddevchallenge
+
+import android.app.Application
+import timber.log.Timber
+
+class CountdownApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        Timber.plant(Timber.DebugTree())
+    }
+}

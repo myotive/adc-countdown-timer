@@ -16,13 +16,22 @@
 package com.example.androiddevchallenge
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.rememberNavController
+import com.example.androiddevchallenge.screens.CountdownScreen
+import com.example.androiddevchallenge.screens.CountdownViewModel
+import com.example.androiddevchallenge.screens.StartCountdownScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                CountdownApp()
             }
         }
     }
@@ -38,9 +47,42 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
+fun CountdownApp() {
+    val navController = rememberNavController()
+    val viewModelFactory = CountdownViewModel.Factory(
+        navController = navController,
+        progressColor = MaterialTheme.colors.secondary,
+        textColor = MaterialTheme.colors.onPrimary,
+        backgroundColor = MaterialTheme.colors.background
+    )
+    val viewModel: CountdownViewModel = viewModel(factory = viewModelFactory)
+
+    navController.setLifecycleOwner(LocalLifecycleOwner.current)
+    navController.setOnBackPressedDispatcher(OnBackPressedDispatcher {
+        viewModel.stopCountdown()
+    })
+
     Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+        NavHost(navController = navController, startDestination = "startCountdown") {
+            composable(route = "startCountdown") {
+                StartCountdownScreen(navController = navController)
+            }
+
+            composable(
+                route = "countdown/{startMinutes}/{startSeconds}",
+                arguments = listOf(
+                    navArgument("startMinutes") { defaultValue = 0 },
+                    navArgument("startSeconds") { defaultValue = 0 }
+                ),
+            ) {
+                viewModel.startMinutes = it.arguments?.getInt("startMinutes") ?: 0
+                viewModel.startSeconds = it.arguments?.getInt("startSeconds") ?: 0
+
+                CountdownScreen(viewModel)
+
+                viewModel.startCountdown()
+            }
+        }
     }
 }
 
@@ -48,14 +90,14 @@ fun MyApp() {
 @Composable
 fun LightPreview() {
     MyTheme {
-        MyApp()
+        CountdownApp()
     }
 }
 
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
+@Preview("Dark Theme", widthDp = 1080, heightDp = 1260)
 @Composable
 fun DarkPreview() {
     MyTheme(darkTheme = true) {
-        MyApp()
+        CountdownApp()
     }
 }
