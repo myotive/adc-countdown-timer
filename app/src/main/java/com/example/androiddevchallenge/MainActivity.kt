@@ -19,9 +19,14 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -65,7 +70,13 @@ fun CountdownApp() {
     Surface(color = MaterialTheme.colors.background) {
         NavHost(navController = navController, startDestination = "startCountdown") {
             composable(route = "startCountdown") {
-                StartCountdownScreen(navController = navController)
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    StartCountdownScreen(navController = navController)
+                }
             }
 
             composable(
