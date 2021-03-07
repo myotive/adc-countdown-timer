@@ -35,7 +35,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.screens.CountdownScreen
-import com.example.androiddevchallenge.screens.CountdownViewModel
 import com.example.androiddevchallenge.screens.StartCountdownScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
@@ -54,12 +53,7 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun CountdownApp() {
     val navController = rememberNavController()
-    val viewModelFactory = CountdownViewModel.Factory(
-        navController = navController,
-        progressColor = MaterialTheme.colors.secondary,
-        textColor = MaterialTheme.colors.onPrimary,
-        backgroundColor = MaterialTheme.colors.background
-    )
+    val viewModelFactory = CountdownViewModel.Factory(navController = navController)
     val viewModel: CountdownViewModel = viewModel(factory = viewModelFactory)
 
     navController.setLifecycleOwner(LocalLifecycleOwner.current)
