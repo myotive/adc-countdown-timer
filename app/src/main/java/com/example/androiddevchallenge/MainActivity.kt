@@ -37,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.screens.CountdownScreen
 import com.example.androiddevchallenge.screens.StartCountdownScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.viewmodels.CountdownViewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,9 +58,11 @@ fun CountdownApp() {
     val viewModel: CountdownViewModel = viewModel(factory = viewModelFactory)
 
     navController.setLifecycleOwner(LocalLifecycleOwner.current)
-    navController.setOnBackPressedDispatcher(OnBackPressedDispatcher {
-        viewModel.stopCountdown()
-    })
+    navController.setOnBackPressedDispatcher(
+        OnBackPressedDispatcher {
+            viewModel.stopCountdown()
+        }
+    )
 
     Surface(color = MaterialTheme.colors.background) {
         NavHost(navController = navController, startDestination = "startCountdown") {

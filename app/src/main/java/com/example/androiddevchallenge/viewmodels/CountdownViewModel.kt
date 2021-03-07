@@ -1,4 +1,19 @@
-package com.example.androiddevchallenge
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.example.androiddevchallenge.viewmodels
 
 import android.os.CountDownTimer
 import android.os.Handler
@@ -35,7 +50,8 @@ class CountdownViewModel(
      * Initialization data
      */
     private val totalCountDownTimeMills
-        get() = TimeUnit.MINUTES.toMillis(startMinutes.toLong()) + TimeUnit.SECONDS.toMillis((startSeconds.plus(1).toLong())
+        get() = TimeUnit.MINUTES.toMillis(startMinutes.toLong()) + TimeUnit.SECONDS.toMillis(
+            (startSeconds.plus(1).toLong())
         )
 
     private val onTick = { millisUntilFinished: Long ->
@@ -44,11 +60,11 @@ class CountdownViewModel(
 
         currentProgress = millisUntilFinished.toFloat() / totalCountDownTimeMills.toFloat()
         Timber.i("Current Progress: $currentProgress")
-        countdownState = when(currentProgress) {
-            in 0.75f .. 1.00f -> CountdownState.Started
-            in 0.50f .. 0.75f -> CountdownState.Quarter
-            in 0.25f .. 0.50f -> CountdownState.Half
-            in 0.0f .. 0.25f -> CountdownState.ThreeQuarters
+        countdownState = when (currentProgress) {
+            in 0.75f..1.00f -> CountdownState.Started
+            in 0.50f..0.75f -> CountdownState.Quarter
+            in 0.25f..0.50f -> CountdownState.Half
+            in 0.0f..0.25f -> CountdownState.ThreeQuarters
             else -> CountdownState.Done
         }
         Timber.i("Current State: $countdownState")
@@ -65,16 +81,18 @@ class CountdownViewModel(
         countDownTimer = getCountDownTimer(totalCountDownTimeMills, onTick) {
             currentProgress = 0.0f
 
-            Handler(Looper.getMainLooper()).postDelayed({
-                navController.popBackStack()
-            }, 2000)
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    navController.popBackStack()
+                },
+                2000
+            )
         }
 
         countDownTimer?.start()
     }
 
     fun stopCountdown() = countDownTimer?.cancel()
-
 
     private fun getCountDownTimer(
         totalCountDownTimeMills: Long,
