@@ -33,7 +33,7 @@ fun StartCountdownScreen(navController: NavHostController = rememberNavControlle
 
     val buttonEnabled = remember { mutableStateOf(false) }
     val startMinutes = remember { mutableStateOf("00") }
-    val startSeconds = remember { mutableStateOf("10") }
+    val startSeconds = remember { mutableStateOf("00") }
 
     val onClick = {
         val currentStartMinutes = startMinutes.value.toLong()
