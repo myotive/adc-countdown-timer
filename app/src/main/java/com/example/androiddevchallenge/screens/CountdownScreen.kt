@@ -15,7 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,19 +30,50 @@ import com.example.androiddevchallenge.CountdownViewModel
  * Input takes [startMinutes] to represent the timer's start time (in minutes) plus the [startSeconds]
  * to represent the timer's additional second time. (1 minute and 30 seconds, for example)
  */
+@Composable
+fun CountdownScreen(
+    viewModel: CountdownViewModel
+) = Box(modifier = Modifier.fillMaxSize()) {
 
-enum class CountdownState {
-    Started, Quarter, Half, ThreeQuarters, Done;
-}
+    val updatedState =
+        updateTransitionData(
+            state = viewModel.countdownState,
+            progress = viewModel.currentProgress
+        )
 
-class CountdownTransitionData(
-    progressColor: State<Color>,
-    backgroundColor: State<Color>,
-    textColor: State<Color>
-) {
-    val progressColor by progressColor
-    val backgroundColor by backgroundColor
-    val textColor by textColor
+    val progressTransition: Float by animateFloatAsState(
+        targetValue = viewModel.currentProgress,
+        animationSpec = tween(easing = LinearEasing)
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = updatedState.backgroundColor)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        CircularProgressIndicator(
+            modifier = Modifier.size(350.dp),
+            progress = progressTransition,
+            strokeWidth = 16.dp,
+            color = updatedState.progressColor
+        )
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = viewModel.timeLeft,
+            color = updatedState.textColor,
+            style = MaterialTheme.typography.h3
+        )
+    }
 }
 
 @Composable
@@ -85,48 +119,16 @@ fun updateTransitionData(state: CountdownState, progress: Float): CountdownTrans
     }
 }
 
-@Composable
-fun CountdownScreen(
-    viewModel: CountdownViewModel
-) = Box(modifier = Modifier.fillMaxSize()) {
+enum class CountdownState {
+    Started, Quarter, Half, ThreeQuarters, Done;
+}
 
-    val updatedState =
-        updateTransitionData(
-            state = viewModel.countdownState,
-            progress = viewModel.currentProgress
-        )
-
-    val progressTransition: Float by animateFloatAsState(
-        targetValue = viewModel.currentProgress,
-        animationSpec = tween(easing = LinearEasing)
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = updatedState.backgroundColor)
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        CircularProgressIndicator(
-            modifier = Modifier.size(350.dp),
-            progress = progressTransition,
-            strokeWidth = 16.dp,
-            color = updatedState.progressColor
-        )
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = viewModel.timeLeft,
-            color = updatedState.textColor,
-            style = MaterialTheme.typography.h3
-        )
-    }
+class CountdownTransitionData(
+    progressColor: State<Color>,
+    backgroundColor: State<Color>,
+    textColor: State<Color>
+) {
+    val progressColor by progressColor
+    val backgroundColor by backgroundColor
+    val textColor by textColor
 }
